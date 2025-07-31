@@ -1,9 +1,12 @@
 package com.booking.hotel_service.dto;
 
 import java.time.LocalDate;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class HotelDto {
 	private String name;
 	private String address;
@@ -13,5 +16,4 @@ public class HotelDto {
 	private LocalDate closeTime;
 	private int minPrice;
 	private int maxPrice;
-
 }

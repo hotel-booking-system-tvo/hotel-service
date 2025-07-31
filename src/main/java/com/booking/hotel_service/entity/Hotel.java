@@ -13,10 +13,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name ="\"hotel\"")
 public class Hotel {
 
@@ -31,13 +35,13 @@ public class Hotel {
 	strategy = "org.hibernate.id.UUIDGenerator")
 	private String id;
 	
-	@Column(name = "\"name\"")
+	@Column(name = "\"name\"", columnDefinition = "NVARCHAR(255)")
 	private String name;
 	
-	@Column(name = "\"address\"")
+	@Column(name = "\"address\"", columnDefinition = "NVARCHAR(255)")
 	private String address;
 	
-	@Column(name = "\"description\"")
+	@Column(name = "\"description\"", columnDefinition = "NVARCHAR(255)")
 	private String description;
 	
 	@Column(name = "\"createDate\"")
@@ -66,9 +70,9 @@ public class Hotel {
 	@Column(name = "\"maxPrice\"")
 	private int maxPrice;
 	
-	@Column(name = "\"createdBy\"")
+	@Column(name = "\"createdBy\"", columnDefinition = "NVARCHAR(255)")
 	private String createdBy;
 	
-	@Column(name = "\"updatedBy\"")
+	@Column(name = "\"updatedBy\"", columnDefinition = "NVARCHAR(255)")
 	private String updatedBy;
 }
