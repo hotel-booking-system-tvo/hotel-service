@@ -1,13 +1,20 @@
 package com.booking.hotel_service.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.booking.hotel_service.dto.HotelDto;
+import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.repository.HotelRepository;
+
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 @Transactional
@@ -28,6 +35,54 @@ public class HotelServiceImpl implements HotelService {
 		Hotel saveHotel = hotelRepository.save(hotel);
 		
 		return modelMapper.map(saveHotel, HotelDto.class);
+	}
+	
+	@Override
+	public List<Hotel> searchHotels(HotelSearchRequest request) {
+	    return hotelRepository.findAll((root, query, cb) -> {
+	        List<Predicate> predicates = new ArrayList<>();
+
+	        if (request.getName() != null) {
+	            predicates.add(cb.like(cb.lower(root.get("name")), "%" + request.getName().toLowerCase() + "%"));
+	        }
+
+	        if (request.getAddress() != null) {
+	            predicates.add(cb.like(cb.lower(root.get("address")), "%" + request.getAddress().toLowerCase() + "%"));
+	        }
+
+	        if (request.getMinPrice() != null) {
+	            predicates.add(cb.greaterThanOrEqualTo(root.get("minPrice"), request.getMinPrice()));
+	        }
+
+	        if (request.getMaxPrice() != null) {
+	            predicates.add(cb.lessThanOrEqualTo(root.get("maxPrice"), request.getMaxPrice()));
+	        }
+
+	        return cb.and(predicates.toArray(new Predicate[0]));
+	    });
+	    
+	    
+	}
+	
+	@Override
+	public List<HotelDto> getAllHotels() {
+	    List<Hotel> hotels = hotelRepository.findAll();
+	    return hotels.stream()
+	                 .map(hotel -> modelMapper.map(hotel, HotelDto.class))
+	                 .collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<HotelDto> saveAll(List<HotelDto> hotels) {
+	    List<Hotel> hotelEntities = hotels.stream()
+	        .map(dto ->modelMapper.map(dto, Hotel.class))
+	        .collect(Collectors.toList());
+
+	    List<Hotel> savedEntities = hotelRepository.saveAll(hotelEntities);
+
+	    return savedEntities.stream()
+	        .map(entity -> modelMapper.map(entity, HotelDto.class))
+	        .collect(Collectors.toList());
 	}
 
 }

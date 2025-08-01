@@ -1,9 +1,15 @@
 package com.booking.hotel_service.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.booking.hotel_service.constant.HotelConstant;
 import com.booking.hotel_service.dto.HotelDto;
+import com.booking.hotel_service.dto.HotelSearchRequest;
+import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.service.HotelService;
 
 @ComponentScan
@@ -23,11 +31,42 @@ public class HotelController {
 	@Autowired
 	private HotelService hotelService  ;
 	
+	@Autowired
+    private ModelMapper modelMapper;
+	
 	@PostMapping("")
 	public ResponseEntity<Object> addHotel(@RequestBody HotelDto require) throws Exception {
 		
 		hotelService.createHotel(require);
 		return ResponseEntity.ok("OK");
 	}
+	
+   
+    @PostMapping("/search")
+    public ResponseEntity<List<HotelDto>> searchHotels(@RequestBody HotelSearchRequest request) {
+        List<Hotel> hotels = hotelService.searchHotels(request);
+        List<HotelDto> dtos = hotels.stream()
+        		.map(hotel -> modelMapper.map(hotel, HotelDto.class))
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(dtos);
+    }
+
+    
+    @GetMapping
+    public ResponseEntity<List<HotelDto>> getAllHotels() {
+        List<HotelDto> hotels = hotelService.getAllHotels();
+        return ResponseEntity.ok(hotels);
+    }
+    
+    @PostMapping("/batch")
+    public ResponseEntity<?> insertListHotel(@RequestBody List<HotelDto> hotelDtoList) {
+        try {
+            List<HotelDto> savedHotels = hotelService.saveAll(hotelDtoList);
+            return ResponseEntity.ok(savedHotels);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu danh sách khách sạn");
+        }
+    }
 
 }
