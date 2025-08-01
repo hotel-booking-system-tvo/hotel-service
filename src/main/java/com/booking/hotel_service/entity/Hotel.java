@@ -1,8 +1,14 @@
 package com.booking.hotel_service.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -44,35 +50,34 @@ public class Hotel {
 	@Column(name = "\"description\"", columnDefinition = "NVARCHAR(255)")
 	private String description;
 	
-	@Column(name = "\"createDate\"")
-	@LastModifiedDate
-	@JsonFormat(pattern = "MM-dd-yyyy HH:mm:ss")
-	private LocalDate createdDate;
+	@CreationTimestamp
+	@Column(name = "\"createdate\"")
+	@CreatedDate
+	private Date createdDate;
 	
-	@Column(name = "\"updatedDate\"")
+	@UpdateTimestamp
+	@Column(name = "\"updateddate\"", nullable = false, updatable = false)
 	@LastModifiedDate
-	@JsonFormat(pattern = "MM-dd-yyyy HH:mm:ss")
-	private LocalDate updatedDate;
+	private Date updatedDate;
 	
-	@Column(name = "\"openTime\"")
-	@LastModifiedDate
+	@Column(name = "\"opentime\"")
 	@JsonFormat(pattern = "MM-dd-yyyy HH:mm:ss")
-	private LocalDate openTime;
+	private LocalDateTime openTime;
 	
-	@Column(name = "\"closeTime\"")
-	@LastModifiedDate
+	@Column(name = "\"closetime\"")
 	@JsonFormat(pattern = "MM-dd-yyyy HH:mm:ss")
-	private LocalDate closeTime;
+	private LocalDateTime closeTime;
 	
-	@Column(name = "\"minPrice\"")
+	@Column(name = "\"minprice\"")
 	private int minPrice;
 	
-	@Column(name = "\"maxPrice\"")
+	@Column(name = "\"maxprice\"")
 	private int maxPrice;
 	
-	@Column(name = "\"createdBy\"", columnDefinition = "NVARCHAR(255)")
+	@Column(name = "\"createdby\"", columnDefinition = "NVARCHAR(255)")
+	@CreatedBy
 	private String createdBy;
 	
-	@Column(name = "\"updatedBy\"", columnDefinition = "NVARCHAR(255)")
+	@Column(name = "\"updatedby\"", columnDefinition = "NVARCHAR(255)")
 	private String updatedBy;
 }
