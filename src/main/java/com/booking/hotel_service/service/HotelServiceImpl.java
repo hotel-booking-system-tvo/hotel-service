@@ -103,4 +103,13 @@ public class HotelServiceImpl implements HotelService {
 		Hotel saveHotel = hotelRepository.save(existingHotel);
 		return modelMapper.map(saveHotel, HotelDto.class);
 	}
+	
+	@Override
+	public HotelDto getHotelById(String id) {
+		
+		Hotel hotel = hotelRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
+		return modelMapper.map(hotel, HotelDto.class);
+	}
+	
 }

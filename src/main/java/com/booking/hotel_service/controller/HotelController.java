@@ -24,6 +24,8 @@ import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.service.HotelService;
 
+import jakarta.validation.Valid;
+
 @ComponentScan
 @RestController
 @CrossOrigin
@@ -38,7 +40,7 @@ public class HotelController {
     private ModelMapper modelMapper;
 	
 	@PostMapping("")
-	public ResponseEntity<Object> addHotel(@RequestBody HotelDto require) throws Exception {
+	public ResponseEntity<Object> addHotel(@Valid @RequestBody HotelDto require) throws Exception {
 		
 		hotelService.createHotel(require);
 		return ResponseEntity.ok("OK");
@@ -55,6 +57,12 @@ public class HotelController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Object> getHotelById(@PathVariable("id") UUID id){
+    	HotelDto hotelDto = hotelService.getHotelById(id.toString());
+    	
+    	return ResponseEntity.ok(hotelDto);
+    }
     
     @GetMapping
     public ResponseEntity<List<HotelDto>> getAllHotels() {
