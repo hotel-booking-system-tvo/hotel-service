@@ -4,13 +4,17 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 public class HotelDto {
+	
+	@NotBlank(message = "Tên không được để trống")
 	private String name;
+	@NotBlank(message = "Tên không được để trống")
 	private String address;
 	private String description;
 	
