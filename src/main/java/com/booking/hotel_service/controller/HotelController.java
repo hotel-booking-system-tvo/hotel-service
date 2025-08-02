@@ -2,6 +2,7 @@ package com.booking.hotel_service.controller;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -18,14 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.booking.common.Resource;
 import com.booking.hotel_service.constant.HotelConstant;
 import com.booking.hotel_service.dto.HotelDto;
 import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
+import com.booking.hotel_service.resource.HotelResourceBuilder;
 import com.booking.hotel_service.service.HotelService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-
 @ComponentScan
 @RestController
 @CrossOrigin
@@ -34,10 +37,13 @@ public class HotelController {
 	
 	
 	@Autowired
-	private HotelService hotelService  ;
+	private HotelService hotelService;
 	
 	@Autowired
     private ModelMapper modelMapper;
+	
+	@Autowired
+	private HotelResourceBuilder hotelResourceBuilder;
 	
 	@PostMapping("")
 	public ResponseEntity<Object> addHotel(@Valid @RequestBody HotelDto require) throws Exception {
@@ -58,11 +64,17 @@ public class HotelController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getHotelById(@PathVariable("id") UUID id){
-    	HotelDto hotelDto = hotelService.getHotelById(id.toString());
-    	
-    	return ResponseEntity.ok(hotelDto);
-    }
+	public ResponseEntity<Object> getHotelById(@PathVariable("id") String id) {
+		try {
+			Hotel hotel = hotelService.getHotelById(id);
+			Resource<Map<String, Object>> resource = hotelResourceBuilder.getHotelInstanceResource(hotel);
+			return ResponseEntity.ok(resource);
+		} catch (EntityNotFoundException ex) {
+			return ResponseEntity.notFound().build();
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống");
+		}
+	}
     
     @GetMapping
     public ResponseEntity<List<HotelDto>> getAllHotels() {

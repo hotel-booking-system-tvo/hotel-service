@@ -15,6 +15,7 @@ import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.exception.ResourceNotFoundException;
 import com.booking.hotel_service.repository.HotelRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 
 @Service
@@ -105,11 +106,10 @@ public class HotelServiceImpl implements HotelService {
 	}
 	
 	@Override
-	public HotelDto getHotelById(String id) {
+	public Hotel getHotelById(String id) {
 		
 		Hotel hotel = hotelRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
-		return modelMapper.map(hotel, HotelDto.class);
+		return hotel;
 	}
-	
 }
