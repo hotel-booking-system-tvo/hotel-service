@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.booking.hotel_service.dto.HotelDto;
 import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
+import com.booking.hotel_service.exception.ResourceNotFoundException;
 import com.booking.hotel_service.repository.HotelRepository;
 
 import jakarta.persistence.criteria.Predicate;
@@ -85,4 +86,21 @@ public class HotelServiceImpl implements HotelService {
 	        .collect(Collectors.toList());
 	}
 
+	@Override
+	public HotelDto updateHotel(String id,HotelDto update) {
+		
+		Hotel existingHotel = hotelRepository.findById(id)
+		        .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
+		
+	    existingHotel.setName(update.getName());
+	    existingHotel.setAddress(update.getAddress());
+	    existingHotel.setDescription(update.getDescription());
+	    existingHotel.setMinPrice(update.getMinPrice());
+	    existingHotel.setMaxPrice(update.getMaxPrice());
+	    existingHotel.setOpenTime(update.getOpenTime());
+	    existingHotel.setCloseTime(update.getCloseTime());
+		
+		Hotel saveHotel = hotelRepository.save(existingHotel);
+		return modelMapper.map(saveHotel, HotelDto.class);
+	}
 }

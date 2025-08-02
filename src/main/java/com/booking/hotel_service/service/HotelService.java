@@ -11,4 +11,5 @@ public interface HotelService {
 	List<Hotel> searchHotels(HotelSearchRequest request);
 	List<HotelDto> getAllHotels();
 	List<HotelDto> saveAll(List<HotelDto> hotels);
+	HotelDto updateHotel(String id,HotelDto update);
 }
