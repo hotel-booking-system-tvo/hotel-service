@@ -24,6 +24,7 @@ import com.booking.hotel_service.constant.HotelConstant;
 import com.booking.hotel_service.dto.HotelDto;
 import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
+import com.booking.hotel_service.exception.ResourceNotFoundException;
 import com.booking.hotel_service.resource.HotelResourceBuilder;
 import com.booking.hotel_service.service.HotelService;
 
@@ -64,16 +65,10 @@ public class HotelController {
     }
 
     @GetMapping(value = "/{id}")
-	public ResponseEntity<Object> getHotelById(@PathVariable("id") String id) {
-		try {
-			Hotel hotel = hotelService.getHotelById(id);
-			Resource<Map<String, Object>> resource = hotelResourceBuilder.getHotelInstanceResource(hotel);
-			return ResponseEntity.ok(resource);
-		} catch (EntityNotFoundException ex) {
-			return ResponseEntity.notFound().build();
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống");
-		}
+	public ResponseEntity<Object> getHotelById(@PathVariable("id") String id) throws Exception {
+		Hotel hotel = hotelService.getHotelById(id);
+		Resource<Map<String, Object>> resource = hotelResourceBuilder.getHotelInstanceResource(hotel);
+		return ResponseEntity.ok(resource);
 	}
     
     @GetMapping
