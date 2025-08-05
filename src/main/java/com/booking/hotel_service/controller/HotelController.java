@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Sort;
 
 import com.booking.common.Resource;
 import com.booking.hotel_service.constant.HotelConstant;
@@ -25,6 +30,7 @@ import com.booking.hotel_service.dto.HotelDto;
 import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.exception.ResourceNotFoundException;
+import com.booking.hotel_service.pageable.PagedModelBuilder;
 import com.booking.hotel_service.resource.HotelResourceBuilder;
 import com.booking.hotel_service.service.HotelService;
 
@@ -56,9 +62,11 @@ public class HotelController {
 	
    
     @PostMapping("/search")
-    public ResponseEntity<List<Resource<Map<String, Object>>>> searchHotels(@RequestBody HotelSearchRequest request) {
+    public ResponseEntity<PagedModel<Resource<Map<String, Object>>>> searchHotels(@PageableDefault(size = 5, sort = { "name", "minPrice" },direction = Sort.Direction.ASC) Pageable pageable ,@RequestBody HotelSearchRequest request) {
 
-        List<Resource<Map<String, Object>>> resources  = hotelService.searchHotels(request).stream()
+    	Page<Hotel> page =hotelService.searchHotels(pageable,request);
+    	
+    	List<Resource<Map<String, Object>>> resources  = page.getContent().stream()
     			.map(hotel -> {
     	            try {
     	                return hotelResourceBuilder.getHotelInstanceResource(hotel);
@@ -67,8 +75,11 @@ public class HotelController {
     	            }
     	        })
     	        .collect(Collectors.toList());
+    	
+        PagedModel<Resource<Map<String, Object>>> pagedModel = PagedModelBuilder.build(page, resources);
 
-        return ResponseEntity.ok(resources);
+        return ResponseEntity.ok(pagedModel);
+
     }
 
     @GetMapping(value = "/{id}")
@@ -79,8 +90,11 @@ public class HotelController {
 	}
     
     @GetMapping
-    public ResponseEntity<List<Resource<Map<String, Object>>>> getAllHotels() throws Exception {
-    	List<Resource<Map<String, Object>>> resources  = hotelService.getAllHotels().stream()
+    public ResponseEntity<PagedModel<Resource<Map<String, Object>>>> getAllHotels(@PageableDefault(size = 5, sort = { "name", "minPrice" },direction = Sort.Direction.ASC) Pageable pageable ) throws Exception {
+    	
+    	 Page<Hotel> page = hotelService.getAllHotels(pageable);
+    	
+    	List<Resource<Map<String, Object>>> resources  = page.getContent().stream()
     			.map(hotel -> {
     	            try {
     	                return hotelResourceBuilder.getHotelInstanceResource(hotel);
@@ -89,8 +103,10 @@ public class HotelController {
     	            }
     	        })
     	        .collect(Collectors.toList());
+    	
+        PagedModel<Resource<Map<String, Object>>> pagedModel = PagedModelBuilder.build(page, resources);
 
-        return ResponseEntity.ok(resources);
+        return ResponseEntity.ok(pagedModel);
     }
     
     @PostMapping("/batch")

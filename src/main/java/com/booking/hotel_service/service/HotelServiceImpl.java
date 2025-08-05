@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +42,7 @@ public class HotelServiceImpl implements HotelService {
 	}
 	
 	@Override
-	public List<Hotel> searchHotels(HotelSearchRequest request) {
+	public Page<Hotel> searchHotels(Pageable pageable,HotelSearchRequest request) {
 	    return hotelRepository.findAll((root, query, cb) -> {
 	        List<Predicate> predicates = new ArrayList<>();
 
@@ -61,14 +63,14 @@ public class HotelServiceImpl implements HotelService {
 	        }
 
 	        return cb.and(predicates.toArray(new Predicate[0]));
-	    });
+	    },pageable);
 	    
 	    
 	}
 	
 	@Override
-	public List<Hotel> getAllHotels() {
-	    List<Hotel> hotels = hotelRepository.findAll();
+	public Page<Hotel> getAllHotels(Pageable pageable) {
+		Page<Hotel> hotels = hotelRepository.findAll(pageable);
 //	    return hotels.stream()
 //	                 .map(hotel -> modelMapper.map(hotel, HotelDto.class))
 //	                 .collect(Collectors.toList());
