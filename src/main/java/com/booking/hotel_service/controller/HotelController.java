@@ -49,19 +49,26 @@ public class HotelController {
 	@PostMapping("")
 	public ResponseEntity<Object> addHotel(@Valid @RequestBody HotelDto require) throws Exception {
 		
-		hotelService.createHotel(require);
-		return ResponseEntity.ok("OK");
+		Hotel hotel=  hotelService.createHotel(require);
+		Resource<Map<String, Object>> resource = hotelResourceBuilder.getHotelInstanceResource(hotel);
+		return ResponseEntity.ok(resource);
 	}
 	
    
     @PostMapping("/search")
-    public ResponseEntity<List<HotelDto>> searchHotels(@RequestBody HotelSearchRequest request) {
-        List<Hotel> hotels = hotelService.searchHotels(request);
-        List<HotelDto> dtos = hotels.stream()
-        		.map(hotel -> modelMapper.map(hotel, HotelDto.class))
-                .collect(Collectors.toList());
-        
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<List<Resource<Map<String, Object>>>> searchHotels(@RequestBody HotelSearchRequest request) {
+
+        List<Resource<Map<String, Object>>> resources  = hotelService.searchHotels(request).stream()
+    			.map(hotel -> {
+    	            try {
+    	                return hotelResourceBuilder.getHotelInstanceResource(hotel);
+    	            } catch (Exception e) {
+    	                throw new RuntimeException(e);
+    	            }
+    	        })
+    	        .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resources);
     }
 
     @GetMapping(value = "/{id}")
@@ -72,25 +79,39 @@ public class HotelController {
 	}
     
     @GetMapping
-    public ResponseEntity<List<HotelDto>> getAllHotels() {
-        List<HotelDto> hotels = hotelService.getAllHotels();
-        return ResponseEntity.ok(hotels);
+    public ResponseEntity<List<Resource<Map<String, Object>>>> getAllHotels() throws Exception {
+    	List<Resource<Map<String, Object>>> resources  = hotelService.getAllHotels().stream()
+    			.map(hotel -> {
+    	            try {
+    	                return hotelResourceBuilder.getHotelInstanceResource(hotel);
+    	            } catch (Exception e) {
+    	                throw new RuntimeException(e);
+    	            }
+    	        })
+    	        .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resources);
     }
     
     @PostMapping("/batch")
-    public ResponseEntity<?> insertListHotel(@RequestBody List<HotelDto> hotelDtoList) {
-        try {
-            List<HotelDto> savedHotels = hotelService.saveAll(hotelDtoList);
-            return ResponseEntity.ok(savedHotels);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lưu danh sách khách sạn");
-        }
-    }
+	public ResponseEntity<List<Resource<Map<String, Object>>>> insertListHotel(
+			@RequestBody List<HotelDto> hotelDtoList) {
+		List<Resource<Map<String, Object>>> resources = hotelService.saveAll(hotelDtoList).stream().map(hotel -> {
+			try {
+				return hotelResourceBuilder.getHotelInstanceResource(hotel);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}).collect(Collectors.toList());
+		return ResponseEntity.ok(resources);
+	}
     
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<HotelDto> updateProvice(@RequestBody HotelDto model, @PathVariable("id") UUID id){
-		HotelDto updatedHotel = hotelService.updateHotel(id.toString(),model);
-		return ResponseEntity.ok(updatedHotel);
+	public ResponseEntity<Object> updateProvice(@RequestBody HotelDto model, @PathVariable("id") UUID id) throws Exception {
+		
+		Hotel hotel = hotelService.updateHotel(id.toString(),model);
+		Resource<Map<String, Object>> resource = hotelResourceBuilder.getHotelInstanceResource(hotel);
+		return ResponseEntity.ok(resource);
 	}
 
 }

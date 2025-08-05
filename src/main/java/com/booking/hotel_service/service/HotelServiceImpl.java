@@ -30,13 +30,13 @@ public class HotelServiceImpl implements HotelService {
 	
 
 	@Override
-	public HotelDto createHotel(HotelDto require) throws Exception {
+	public Hotel createHotel(HotelDto require) throws Exception {
 		
 		Hotel hotel = modelMapper.map(require, Hotel.class);
 		
 		Hotel saveHotel = hotelRepository.save(hotel);
 		
-		return modelMapper.map(saveHotel, HotelDto.class);
+		return saveHotel;
 	}
 	
 	@Override
@@ -67,28 +67,30 @@ public class HotelServiceImpl implements HotelService {
 	}
 	
 	@Override
-	public List<HotelDto> getAllHotels() {
+	public List<Hotel> getAllHotels() {
 	    List<Hotel> hotels = hotelRepository.findAll();
-	    return hotels.stream()
-	                 .map(hotel -> modelMapper.map(hotel, HotelDto.class))
-	                 .collect(Collectors.toList());
+//	    return hotels.stream()
+//	                 .map(hotel -> modelMapper.map(hotel, HotelDto.class))
+//	                 .collect(Collectors.toList());
+	    return hotels;
 	}
 	
 	@Override
-	public List<HotelDto> saveAll(List<HotelDto> hotels) {
+	public List<Hotel> saveAll(List<HotelDto> hotels) {
 	    List<Hotel> hotelEntities = hotels.stream()
 	        .map(dto ->modelMapper.map(dto, Hotel.class))
 	        .collect(Collectors.toList());
 
 	    List<Hotel> savedEntities = hotelRepository.saveAll(hotelEntities);
-
-	    return savedEntities.stream()
-	        .map(entity -> modelMapper.map(entity, HotelDto.class))
-	        .collect(Collectors.toList());
+//
+//	    return savedEntities.stream()
+//	        .map(entity -> modelMapper.map(entity, HotelDto.class))
+//	        .collect(Collectors.toList());
+	    return savedEntities;
 	}
 
 	@Override
-	public HotelDto updateHotel(String id,HotelDto update) {
+	public Hotel updateHotel(String id,HotelDto update) {
 		
 		Hotel existingHotel = hotelRepository.findById(id)
 		        .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
@@ -102,7 +104,8 @@ public class HotelServiceImpl implements HotelService {
 	    existingHotel.setCloseTime(update.getCloseTime());
 		
 		Hotel saveHotel = hotelRepository.save(existingHotel);
-		return modelMapper.map(saveHotel, HotelDto.class);
+//		return modelMapper.map(saveHotel, HotelDto.class);
+		return saveHotel;
 	}
 	
 	@Override

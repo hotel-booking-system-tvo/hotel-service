@@ -7,10 +7,10 @@ import com.booking.hotel_service.dto.HotelSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
 
 public interface HotelService {
-	HotelDto createHotel(HotelDto require) throws Exception;
+	Hotel createHotel(HotelDto require) throws Exception;
 	Hotel getHotelById(String id);
 	List<Hotel> searchHotels(HotelSearchRequest request);
-	List<HotelDto> getAllHotels();
-	List<HotelDto> saveAll(List<HotelDto> hotels);
-	HotelDto updateHotel(String id,HotelDto update);
+	List<Hotel> getAllHotels();
+	List<Hotel> saveAll(List<HotelDto> hotels);
+	Hotel updateHotel(String id,HotelDto update);
 }
