@@ -16,4 +16,6 @@ public interface HotelService {
 	Page<Hotel> getAllHotels(Pageable pageable);
 	List<Hotel> saveAll(List<HotelDto> hotels);
 	Hotel updateHotel(String id,HotelDto update);
+	Boolean softDeleteHotel(String hotelId);
+	Boolean restoreHotel(String id);
 }

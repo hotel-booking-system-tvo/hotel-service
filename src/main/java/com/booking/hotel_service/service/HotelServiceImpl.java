@@ -2,6 +2,7 @@ package com.booking.hotel_service.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -116,5 +117,29 @@ public class HotelServiceImpl implements HotelService {
 		Hotel hotel = hotelRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
 		return hotel;
+	}
+	@Override
+	public Boolean softDeleteHotel(String id) {
+		Hotel hotel = hotelRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
+
+		if (Boolean.TRUE.equals(hotel.getDeleted())) {
+	        return false;
+	    }
+	    
+	    hotel.setDeleted(true);
+	    hotelRepository.save(hotel);
+	    return true ;
+	}
+	@Override
+	public Boolean restoreHotel(String id) {
+		Hotel hotel = hotelRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
+		if (Boolean.FALSE.equals(hotel.getDeleted())) {
+			return false;
+		}
+		hotel.setDeleted(false);
+		hotelRepository.save(hotel);
+		return true ;
 	}
 }

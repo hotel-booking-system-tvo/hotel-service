@@ -14,7 +14,7 @@ public class HotelDto {
 	
 	@NotBlank(message = "Tên không được để trống")
 	private String name;
-	@NotBlank(message = "Tên không được để trống")
+	@NotBlank(message = "Địa chỉ không được để trống")
 	private String address;
 	private String description;
 	

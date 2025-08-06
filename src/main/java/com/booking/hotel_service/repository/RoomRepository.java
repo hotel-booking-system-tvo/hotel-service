@@ -9,13 +9,14 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import com.booking.hotel_service.entity.Hotel;
+import com.booking.hotel_service.entity.Room;
 
 @Repository
-public interface HotelRepository extends JpaRepository<Hotel, String>,JpaSpecificationExecutor<Hotel> {
+public interface RoomRepository extends JpaRepository<Room, String>,JpaSpecificationExecutor<Room> {
 
-	Optional<Hotel> findById(String id);
+	Optional<Room> findById(String id);
 	
-	Optional<Hotel> findByIdAndDeletedFalse(String id);
+	Optional<Room> findByIdAndDeletedFalse(String id);
 
-	Page<Hotel> findAllByDeletedFalse(Pageable pageable);
+	Page<Room> findAllByDeletedFalse(Pageable pageable);
 }
