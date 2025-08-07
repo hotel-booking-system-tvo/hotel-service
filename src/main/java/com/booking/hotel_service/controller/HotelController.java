@@ -124,7 +124,7 @@ public class HotelController {
 	}
     
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Object> updateProvice(@RequestBody HotelDto model, @PathVariable("id") UUID id) throws Exception {
+	public ResponseEntity<Object> updateHotel(@RequestBody HotelDto model, @PathVariable("id") UUID id) throws Exception {
 		
 		Hotel hotel = hotelService.updateHotel(id.toString(),model);
 		Resource<Map<String, Object>> resource = hotelResourceBuilder.getHotelInstanceResource(hotel);

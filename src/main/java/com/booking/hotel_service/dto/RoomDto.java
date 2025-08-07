@@ -22,6 +22,7 @@ public class RoomDto {
     private Boolean isAvailable = true;
     private String status;
     private String hotelId;
+    private String id;
 	
 	private String createdBy;
 	private String updatedBy;

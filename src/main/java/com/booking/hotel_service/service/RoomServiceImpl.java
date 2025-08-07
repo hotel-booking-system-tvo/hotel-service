@@ -16,6 +16,7 @@ import com.booking.hotel_service.dto.RoomSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.entity.Room;
 import com.booking.hotel_service.exception.ResourceNotFoundException;
+import com.booking.hotel_service.projection.RoomView;
 import com.booking.hotel_service.repository.HotelRepository;
 import com.booking.hotel_service.repository.RoomRepository;
 
@@ -36,9 +37,9 @@ public class RoomServiceImpl implements RoomService {
 	
 
 	@Override
-	public Room createRoom(String hotelId,RoomDto require) throws Exception {
+	public Room createRoom(RoomDto require) throws Exception {
 		
-		Hotel hotel = hotelRepository.findById(hotelId)
+		Hotel hotel = hotelRepository.findById(require.getHotelId())
 		        .orElseThrow(() -> new ResourceNotFoundException("Hotel not found"));
 		
 		Room room = modelMapper.map(require, Room.class);
@@ -95,10 +96,10 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public Room updateRoom(String id,RoomDto update) {
+	public Room updateRoom(RoomDto update) {
 		
-		Room existingRoom = roomRepository.findById(id)
-		        .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + id));
+		Room existingRoom = roomRepository.findById(update.getHotelId())
+		        .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + update.getHotelId()));
 		
 	    existingRoom.setName(update.getName());
 	    existingRoom.setDescription(update.getDescription());
@@ -143,5 +144,9 @@ public class RoomServiceImpl implements RoomService {
 		room.setDeleted(false);
 		roomRepository.save(room);
 		return true ;
+	}
+	@Override
+	public Page<RoomView> getRoomsByHotelId(String hotelId, Pageable pageable) {
+	    return roomRepository.findAllProjectedByHotelId(hotelId, pageable);
 	}
 }
