@@ -149,4 +149,49 @@ public class RoomServiceImpl implements RoomService {
 	public Page<RoomView> getRoomsByHotelId(String hotelId, Pageable pageable) {
 	    return roomRepository.findAllProjectedByHotelId(hotelId, pageable);
 	}
+	
+	public Page<Room> searchRooms(RoomSearchRequest request, Pageable pageable) {
+	    return roomRepository.findAll((root, query, cb) -> {
+	        List<Predicate> predicates = new ArrayList<>();
+
+	        if (request.getName() != null) {
+	            predicates.add(cb.like(cb.lower(root.get("name")), "%" + request.getName().toLowerCase() + "%"));
+	        }
+
+	        if (request.getAddress() != null) {
+	            predicates.add(cb.like(cb.lower(root.get("address")), "%" + request.getAddress().toLowerCase() + "%"));
+	        }
+
+	        if (request.getMinPrice() != null) {
+	            predicates.add(cb.greaterThanOrEqualTo(root.get("minPrice"), request.getMinPrice()));
+	        }
+
+	        if (request.getMaxPrice() != null) {
+	            predicates.add(cb.lessThanOrEqualTo(root.get("maxPrice"), request.getMaxPrice()));
+	        }
+	        
+	        if (request.getRoomType() != null) {
+	            predicates.add(cb.like(cb.lower(root.get("roomType")), "%" + request.getRoomType().toLowerCase() + "%"));
+	        }
+	        
+	        if (request.getCapacity() != null) {
+	            predicates.add(cb.lessThanOrEqualTo(root.get("capacity"), request.getCapacity()));
+	        }
+	        
+	        if (request.getBedcount() != null) {
+	            predicates.add(cb.equal(root.get("bedcount"), request.getBedcount()));
+	        }
+	        
+	        if (request.getStatus() != null) {
+	            predicates.add(cb.like(cb.lower(root.get("status")), "%" + request.getStatus().toLowerCase() + "%"));
+	        }
+	        
+	        if (request.getIsAvailable() != null) {
+	            predicates.add(cb.equal(root.get("isAvailable"), request.getIsAvailable()));
+	        }
+	        
+	        return cb.and(predicates.toArray(new Predicate[0]));
+	    },pageable);
+	    
+	}
 }

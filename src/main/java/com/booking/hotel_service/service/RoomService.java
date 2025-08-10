@@ -20,4 +20,5 @@ public interface RoomService {
 	Boolean softDeleteRoom(String hotelId);
 	Boolean restoreRoom(String id);
 	Page<RoomView> getRoomsByHotelId(String hotelId, Pageable pageable);
+	Page<Room> searchRooms(RoomSearchRequest request, Pageable pageable);
 }

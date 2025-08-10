@@ -1,6 +1,5 @@
 package com.booking.hotel_service.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.entity.Room;
 import com.booking.hotel_service.projection.RoomView;
 

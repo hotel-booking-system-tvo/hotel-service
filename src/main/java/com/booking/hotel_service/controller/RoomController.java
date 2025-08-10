@@ -29,6 +29,7 @@ import com.booking.common.Resource;
 import com.booking.hotel_service.constant.RoomConstant;
 import com.booking.hotel_service.dto.HotelDto;
 import com.booking.hotel_service.dto.RoomDto;
+import com.booking.hotel_service.dto.RoomSearchRequest;
 import com.booking.hotel_service.entity.Hotel;
 import com.booking.hotel_service.entity.Room;
 import com.booking.hotel_service.exception.ResourceNotFoundException;
@@ -141,6 +142,29 @@ public class RoomController {
                         return roomResourceBuilder.getRoomViewInstanceResource(roomView);
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to build resource", e);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        PagedModel<Resource<Map<String, Object>>> pagedModel = PagedModelBuilder.build(page, resources);
+        return ResponseEntity.ok(pagedModel);
+    }
+    
+    @PostMapping("/search")
+    public ResponseEntity<PagedModel<Resource<Map<String, Object>>>> searchRooms(
+            @RequestBody RoomSearchRequest request,
+            @PageableDefault(size = 10, sort = {"name"}, direction = Sort.Direction.ASC) Pageable pageable) {
+
+        Page<Room> page = roomService.searchRooms(request, pageable);
+
+        
+        
+        List<Resource<Map<String, Object>>> resources = page.getContent().stream()
+                .map(room -> {
+                    try {
+                        return roomResourceBuilder.getRoomInstanceResource(room);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 })
                 .collect(Collectors.toList());
