@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,6 +112,7 @@ public class HotelController {
     }
     
     @PostMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
 	public ResponseEntity<List<Resource<Map<String, Object>>>> insertListHotel(
 			@RequestBody List<HotelDto> hotelDtoList) {
 		List<Resource<Map<String, Object>>> resources = hotelService.saveAll(hotelDtoList).stream().map(hotel -> {
